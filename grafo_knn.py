@@ -65,8 +65,8 @@ class Point:
 
     # Overload == operator
     def __eq__(self, other):
-        if self._x == other.x():
-            if self._y == other.y():
+        if self._x == other.x:
+            if self._y == other.y:
                 return True
         return False
 
@@ -213,8 +213,8 @@ class Euclidean_Space:
             Wether or not p is inside this space
         
         """
-        if p.x() <= self._xSize:
-            if p.y() <= self._ySize:
+        if p.x <= self._xSize:
+            if p.y <= self._ySize:
                 return True
             return False
 
@@ -233,7 +233,7 @@ class Euclidean_Space:
 
         Returns
         -------
-        int 
+        float 
             The distance between the two points
         
         Raises
@@ -246,7 +246,7 @@ class Euclidean_Space:
         # Calculates the distance only if both points belong to the current space
         if self.in_space(point1) and self.in_space(point2):
             
-            return math.sqrt(math.pow(point1.x() - point2.x(), 2) + math.pow(point1.y() - point2.y(), 2))
+            return math.sqrt(math.pow(point1.x - point2.x, 2) + math.pow(point1.y - point2.y, 2))
 
         raise ValueError
 
@@ -274,9 +274,8 @@ class Knn_Graph(Euclidean_Space):
         super().__init__(x_size, y_size)
 
         # Declare vectors of points and edges
-        self._points = np.array(dtype=Point)
-        self._edges = np.array(dtype=Edge)
-
+        self._points = []
+        self._edges = []
 
     @property
     def points(self):
@@ -289,8 +288,8 @@ class Knn_Graph(Euclidean_Space):
     def edges(self):
         return self._edges
     @edges.setter
-    def edges(self, e):
-        self._edges = e
+    def edges(self, edges):
+        self._edges = edges
 
     def add_point(self, p: Point):
         """
@@ -306,7 +305,7 @@ class Knn_Graph(Euclidean_Space):
         # check if the point already exists in the graph
         for point in self._points:
             if point == p:
-                raise ValueError.with_traceback()
+                raise ValueError
         self._points.append(p)
 
     def add_edge(self, e: Edge):
@@ -328,3 +327,58 @@ class Knn_Graph(Euclidean_Space):
             else:
                 # The edge is already present on the graph, raise error
                 raise ValueError.with_traceback()
+ 
+            
+
+    def nearest_neighbour(self, point: Point, minimalDistance : float = 0.0): 
+        """
+        Returns the nearest point to the given point
+
+        Parameters
+        ----------
+        point: Point
+            The point whose nearest neighbour will be found
+
+        minimalDistance: float
+            Only look for points farther than this distance, defaults to 0
+        
+        Returns
+        -------
+        Point
+            The nearest neighbour
+        Float
+            The distance
+        """
+
+        temp = Point() # instantiates a new point at the origin
+        tempMin = self.ySize*self.xSize # Defines the minimum distance as the area of the euclidean space
+
+        # go through all the points on the graph
+        for p in self._points:
+            # if a point is nearer than the current minimal distance,
+            # assigns it as the new nearest point
+            dist = self.distance(p, point)
+            if(dist < tempMin and dist > minimalDistance ):
+                # the new nearest neighbour is p
+                temp = p
+                # the new nearest distance is the newfound one
+                tempMin = dist
+
+        return temp, tempMin
+
+    def grafo_knn(self, v, k):
+        # Para o tamanho V faça
+        for i in range(0,v):
+            # Adiciona um ponto aleatóreo na lista de pontos, o ponto não pode ser maior do que 
+            # o tamanho do espaço euclidiano
+            self.add_point(Point(np.random.randint(0, self._xSize), np.random.randint(0, self._ySize)))
+        # Para cada vértice faça
+        for vertex in self.points:
+            Mindistance = 0
+            tempPoint = Point()
+            # Designa k arestas
+            for i in range(0,k):
+                #Encontra os k vizinhos mais próximos
+                tempPoint, Mindistance = self.nearest_neighbour(vertex, Mindistance)
+                # Adiciona ao conjunto de arestas
+                self.add_edge(Edge(vertex, tempPoint))
