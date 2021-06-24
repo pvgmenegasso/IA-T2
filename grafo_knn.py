@@ -304,8 +304,9 @@ class Knn_Graph(Euclidean_Space):
 
         # check if the point already exists in the graph
         for point in self._points:
+            # Point already exists, try to add a new random point
             if point == p:
-                raise ValueError
+                self.add_point(Point(np.random.randint(0, self._xSize), np.random.randint(0, self._ySize)))
         self._points.append(p)
 
     def add_edge(self, e: Edge):
@@ -369,11 +370,13 @@ class Knn_Graph(Euclidean_Space):
     def grafo_knn(self, v, k):
         # Para o tamanho V faça
         for i in range(0,v):
+            print("gerando ponto .."+str(i))
             # Adiciona um ponto aleatóreo na lista de pontos, o ponto não pode ser maior do que 
             # o tamanho do espaço euclidiano
             self.add_point(Point(np.random.randint(0, self._xSize), np.random.randint(0, self._ySize)))
         # Para cada vértice faça
-        for vertex in self.points:
+        for edx, vertex in enumerate(self.points):
+            print("Gerando hastes do ponto "+str(edx))
             Mindistance = 0
             tempPoint = Point()
             # Designa k arestas
