@@ -269,6 +269,7 @@ class Knn_Graph(Euclidean_Space):
 
     """
 
+
     def __init__(self, x_size: int, y_size: int):
         # Calls super constructor
         super().__init__(x_size, y_size)
@@ -276,6 +277,7 @@ class Knn_Graph(Euclidean_Space):
         # Declare vectors of points and edges
         self._points = []
         self._edges = []
+
 
     @property
     def points(self):
@@ -290,6 +292,7 @@ class Knn_Graph(Euclidean_Space):
     @edges.setter
     def edges(self, edges):
         self._edges = edges
+
 
     def add_point(self, p: Point):
         """
@@ -329,7 +332,39 @@ class Knn_Graph(Euclidean_Space):
                 # The edge is already present on the graph, raise error
                 raise ValueError.with_traceback()
  
-            
+    def farthest_point(self, point: Point):
+        """
+        Finds the point that is farther away from a given point on the graph
+        obs. The point given as argument must have already been removed from the list
+
+        Parameters
+        ----------
+        point: Point
+            The point to which the farthest point will be found
+
+        Returns
+        -------
+        Float
+            The distance found
+        Point
+            The point that is farther away from the given point
+        """
+
+        # assume the maximum distance to be 0
+        max_distance = 0
+        # Temporary Point
+        pTemp = Point()
+
+        # Percorre todos os pontos para checar a maior distancia
+        for p in self._points:
+            # Calcula a distancia entre o ponto argumento e o ponto atual
+            distance = self.distance(point, p)
+            # Se a distancia for maior que a máxima, atualiza a máxima e salva o ponto
+            if distance > max_distance:
+                max_distance = distance 
+                pTemp = p
+        # Retorna a distância e o ponto encontrados
+        return distance, pTemp
 
     def nearest_neighbour(self, point: Point, minimalDistance : float = 0.0): 
         """
@@ -377,11 +412,11 @@ class Knn_Graph(Euclidean_Space):
         # Para cada vértice faça
         for edx, vertex in enumerate(self.points):
             print("Gerando hastes do ponto "+str(edx))
-            Mindistance = 0
+            min_distance = 0
             tempPoint = Point()
             # Designa k arestas
             for i in range(0,k):
                 #Encontra os k vizinhos mais próximos
-                tempPoint, Mindistance = self.nearest_neighbour(vertex, Mindistance)
+                tempPoint, min_distance = self.nearest_neighbour(vertex, min_distance)
                 # Adiciona ao conjunto de arestas
                 self.add_edge(Edge(vertex, tempPoint))
