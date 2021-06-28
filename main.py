@@ -1,5 +1,6 @@
 from grafo_knn import *
 from auxiliary_structures import *
+from searches import *
 from matplotlib import pyplot as plt
 
 
@@ -10,22 +11,40 @@ def main():
     #p0 = Point(10, 20)
     #p1 = Point(20, 30)
 
-    #e1 = Euclidean_Space(500, 500)
+    e1 = Euclidean_Space(300, 300)
 
-    #grafo = Knn_Graph(500, 500)
+    grafo = Knn_Graph(300, 300)
 
-    # Inicializa um grafo knn
-    #grafo.grafo_knn(500, 2)
+    #Inicializa um grafo knn
+    grafo.grafo_knn(300, 5)
 
     #grafo2 = Knn_Graph(3000, 3000)
     #grafo2.grafo_knn(3000, 5)
 
-    #for point in grafo.points:
-    #    plt.scatter(point.x, point.y)
-    #for i, edge in enumerate(grafo2.edges):
-    #    print("plotting edge: "+str(i))
-    #    plt.plot([edge.p1.x, edge.p2.x], [edge.p1.y, edge.p2.y], marker = '.', markersize = 3)
+    search = Best_first(e1, grafo.points[220])
 
+    _, temp = grafo.farthest_point(grafo.points[220])
+
+    search.search(temp, grafo)
+
+    # Plota gráfico
+    for point in grafo.points:
+        plt.scatter(point.x, point.y)
+    for i, edge in enumerate(grafo.edges):
+        print("plotting edge: "+str(i))
+        plt.plot([edge.p1.x, edge.p2.x], [edge.p1.y, edge.p2.y], marker = '.', markersize = 1, color="GREY")
+
+
+    # Plota caminho da busca:
+    for point in search._visitedList:
+        plt.plot(point.x, point.y, marker = ".", markersize=15, color = "RED")
+
+    # Plota Origem e Destino
+    plt.plot(temp.x, temp.y, marker = "*", markersize=15, color="GREEN")
+    plt.plot(grafo.points[220].x, grafo.points[220].y, marker = "*", markersize=15, color="BLUE")
+    
+    """
+    
 
     p = PriorityQueue()
 
@@ -46,12 +65,12 @@ def main():
 
     print(p.array)
 
-    
+    """
     
 
     #print("Distance bewteen the two points is: " + str(e1.distance(p0, p1)))
 
-    #plt.show()
+    plt.show()
 
     input("Falows")
 

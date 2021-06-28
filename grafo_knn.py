@@ -402,6 +402,36 @@ class Knn_Graph(Euclidean_Space):
 
         return temp, tempMin
 
+    def neighbours(self, point: Point):
+        """
+        Return all the direct neighbours for a given point
+
+        Parameters
+        ----------
+        point: Point
+            The point whose neighbours will be returned
+
+        Returns
+        -------
+        neighbours: Point[]
+            A list of neighbour points
+
+        """
+
+        neighbours = []
+
+        # First we find all the edges spanning from point:
+        for edge in self._edges:
+            # Check if point is in one of the edge's ends:
+            if point == edge.p1:
+                # The other point is a neighbour !
+                neighbours.append(edge.p2)
+            elif point == edge.p2:
+                # p1 is a neighbour:
+                neighbours.append(edge.p1)
+
+        return neighbours
+
     def grafo_knn(self, v, k):
         # Para o tamanho V faça
         for i in range(0,v):

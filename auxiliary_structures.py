@@ -21,6 +21,8 @@ class PriorityQueue():
     ----------
     array: np.ndarray
         An array which is used as the backbone for our priority queue
+    size: int
+        The size of the queue
     """
 
     def __init__(self):
@@ -34,6 +36,8 @@ class PriorityQueue():
         """
         self._array = np.zeros((1, 3))
 
+        self.size = self.array.size
+
     @property
     def array(self):
         return self._array
@@ -41,11 +45,20 @@ class PriorityQueue():
     def array(self, array):
         self._array = array
 
+    @property
+    def size(self):
+        return self._size
+    @size.setter
+    def size(self, size):
+        self._size = size
+
     def insert(self, list):
         """
         Inserts a tuple x of 3 values into the Queue, from highest to lowest priority
         on tuples with the same priority, store new values first
 
+        Parameters
+        ----------
         list[3] = [x, y, h]  where x is x coordinate, y is y coordinate and h is heuristic
 
         """
@@ -61,6 +74,7 @@ class PriorityQueue():
         # Adds to the leftmost part of given index the specified values
         self._array = np.insert(self._array, index, [x, y, h], axis=0)
 
+        self._size = self._array.size
 
     def remove(self):
         """
@@ -69,8 +83,9 @@ class PriorityQueue():
         Returns
         -------
         float[3]
-            The first tuple from the queue
+            The first tuple from the queue [x, y, h]
         """
         elements = self._array[0,:] # get first set of tuples from array
         self._array = np.delete(self._array, 0, axis=0)
+        self._size = self._array.size
         return elements
