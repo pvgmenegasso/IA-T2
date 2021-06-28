@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from types import FunctionType
 from grafo_knn import *
 from auxiliary_structures import *
@@ -38,12 +39,16 @@ class GenericSearch():
         #Store the destination for the search
         self._destination =  destination
 
+    @abstractmethod
+    def heuristic():
+        pass
+
     def visited(self, point: Point):
         if point in self._visitedList :
             return True
         return False
 
-    def step(self,actual: Point,  graph : Knn_Graph, heuristic: FunctionType):
+    def step(self,actual: Point,  graph : Knn_Graph):
        
         """
         Expand current node
@@ -87,18 +92,18 @@ class GenericSearch():
                 pass
             # is it on the queue ? (has it already been planned for visitting ?)
             # Don't forget we have to strip x and y dimension to check
-            elif [node.x, node.y, heuristic(node, graph)] in self._queue.array.tolist():
+            elif [node.x, node.y, self.heuristic(node, graph)] in self._queue.array.tolist():
                 # also do nothing
                 pass
             else:
                 # Insert the value into the open list:
-                self._queue.insert([node.x, node.y, heuristic(node, graph)])
+                self._queue.insert([node.x, node.y, self.heuristic(node, graph)])
 
         # Went trough all direct neighbours, found no destinatino
         # returns false
         return False
             
-    def search(self, start: Point, graph: Knn_Graph, heuristic: FunctionType):
+    def search(self, start: Point, graph: Knn_Graph):
         """
         Do the search
 
@@ -113,7 +118,7 @@ class GenericSearch():
         finish = False
 
         # Insert the starting node into the queue
-        self._queue.insert([start.x, start.y, heuristic(start, graph)])
+        self._queue.insert([start.x, start.y, self.heuristic(start, graph)])
 
         print("Starting search !!")
 
@@ -132,7 +137,7 @@ class GenericSearch():
             current_node = Point(current_node_values[0], current_node_values[1])
 
             # Step
-            finish = self.step(current_node, graph, heuristic)
+            finish = self.step(current_node, graph)
 
         return True
 
@@ -167,4 +172,4 @@ class BestFirst(GenericSearch):
         return graph.distance(origin, self._destination)
 
     def search(self, origin: Point, graph: Knn_Graph):
-        super().search(origin, graph, self.heuristic)
+        super().search(origin, graph)
