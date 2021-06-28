@@ -34,7 +34,7 @@ class PriorityQueue():
         n: int
             the n dimension of the queue
         """
-        self._array = np.zeros((1, 3))
+        self._array = np.zeros((0, 3))
 
         self.size = self.array.size
 

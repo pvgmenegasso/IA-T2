@@ -11,17 +11,16 @@ def main():
     #p0 = Point(10, 20)
     #p1 = Point(20, 30)
 
-    e1 = Euclidean_Space(300, 300)
 
-    grafo = Knn_Graph(300, 300)
+    grafo = Knn_Graph(500, 500)
 
     #Inicializa um grafo knn
-    grafo.grafo_knn(300, 5)
+    grafo.grafo_knn(500, 7)
 
     #grafo2 = Knn_Graph(3000, 3000)
     #grafo2.grafo_knn(3000, 5)
 
-    search = Best_first(e1, grafo.points[220])
+    search = BestFirst(grafo.points[220])
 
     _, temp = grafo.farthest_point(grafo.points[220])
 
@@ -43,8 +42,8 @@ def main():
     plt.plot(temp.x, temp.y, marker = "*", markersize=15, color="GREEN")
     plt.plot(grafo.points[220].x, grafo.points[220].y, marker = "*", markersize=15, color="BLUE")
     
-    """
     
+    """
 
     p = PriorityQueue()
 

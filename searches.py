@@ -1,3 +1,4 @@
+from types import FunctionType
 from grafo_knn import *
 from auxiliary_structures import *
 import numpy as np
@@ -13,18 +14,13 @@ variables for time analysis purposes
 
 
 
-class Best_first():
+class GenericSearch():
     """
-    This class defines a greedy
-    best first search algorithm
-    the metric is given as:
-    always travel to the path
-    which is closest to the destination 
-    node in terms of euclidean distance
-    as defined by the euclidean space 
+    This class defines a general Framework
+    for search algorithms
     """
 
-    def __init__(self, space : Euclidean_Space, destination : Point):
+    def __init__(self, destination : Point):
         """
         Parameters
         ----------
@@ -42,36 +38,13 @@ class Best_first():
         #Store the destination for the search
         self._destination =  destination
 
-        self._space = space
-
-    def heuristic(self, origin: Point):
-        """
-        Returns the heuristic for the
-        best first search, given a sef of two points.
-        the goal is: the heuristic is smaller the closest 
-        the origin point is to the destination one.
-
-
-        Parameters
-        ----------
-            origin: Point
-                The origin point from which to calculate the heuristic
-
-        Returns
-        -------
-            Float
-                The result of the formula:  h =  distance
-
-        """
-
-        return self._space.distance(origin, self._destination)
-
     def visited(self, point: Point):
         if point in self._visitedList :
             return True
         return False
 
-    def step(self,actual: Point,  graph : Knn_Graph):
+    def step(self,actual: Point,  graph : Knn_Graph, heuristic: FunctionType):
+       
         """
         Expand current node
 
@@ -114,18 +87,18 @@ class Best_first():
                 pass
             # is it on the queue ? (has it already been planned for visitting ?)
             # Don't forget we have to strip x and y dimension to check
-            elif [node.x, node.y, self.heuristic(node)] in self._queue.array.tolist():
+            elif [node.x, node.y, heuristic(node, graph)] in self._queue.array.tolist():
                 # also do nothing
                 pass
             else:
                 # Insert the value into the open list:
-                self._queue.insert([node.x, node.y, self.heuristic(node)])
+                self._queue.insert([node.x, node.y, heuristic(node, graph)])
 
         # Went trough all direct neighbours, found no destinatino
         # returns false
         return False
             
-    def search(self, start: Point, graph: Knn_Graph):
+    def search(self, start: Point, graph: Knn_Graph, heuristic: FunctionType):
         """
         Do the search
 
@@ -140,7 +113,7 @@ class Best_first():
         finish = False
 
         # Insert the starting node into the queue
-        self._queue.insert([start.x, start.y, self.heuristic(start)])
+        self._queue.insert([start.x, start.y, heuristic(start, graph)])
 
         print("Starting search !!")
 
@@ -159,10 +132,39 @@ class Best_first():
             current_node = Point(current_node_values[0], current_node_values[1])
 
             # Step
-            finish = self.step(current_node, graph)
+            finish = self.step(current_node, graph, heuristic)
 
         return True
 
 
+# As this fuction inherits from the generic search function, we only need to 
+# Define it's heuristic and the rest is python's problem ;)
+class BestFirst(GenericSearch):
+
+    def __init__(self, destination: Point):
+        super().__init__(destination)
+
+    def heuristic(self, origin: Point, graph: Knn_Graph):
+        """
+        Returns the heuristic for the
+        best first search, given a sef of two points.
+        the goal is: the heuristic is smaller the closest 
+        the origin point is to the destination one.
 
 
+        Parameters
+        ----------
+            origin: Point
+                The origin point from which to calculate the heuristic
+
+        Returns
+        -------
+            Float
+                The result of the formula:  h =  distance
+
+        """
+
+        return graph.distance(origin, self._destination)
+
+    def search(self, origin: Point, graph: Knn_Graph):
+        super().search(origin, graph, self.heuristic)
