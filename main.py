@@ -20,7 +20,7 @@ def main():
     #grafo2 = Knn_Graph(3000, 3000)
     #grafo2.grafo_knn(3000, 5)
 
-    search = BestFirst(grafo.points[220])
+    search = AStar(grafo.points[220])
 
     _, temp = grafo.farthest_point(grafo.points[220])
 
